@@ -1,0 +1,196 @@
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+    tags:
+      - "**"
+
+name: "PHPStan, PHPUnit, Codecov"
+
+jobs:
+  code-check:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04]
+        php-version: [8.1]
+        experimental: [false]
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: ctype, dom, json, libxml, mbstring, pdo_sqlite, simplexml, tokenizer, xml, xmlwriter
+          coverage: none
+          tools: composer
+
+      - name: "Get composer Cache directory"
+        id: composer-cache
+        run: |
+          echo "composer_cache_output_dir=dir::$(composer config cache-files-dir)" >> $GITHUB_ENV
+      #          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: "Cache composer dependencies"
+        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7
+        with:
+          path: ${{ env.composer_cache_output_dir }}
+          key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('composer.*') }}
+          restore-keys: |
+            composer-${{ runner.os }}-${{ matrix.php-version }}-
+            composer-${{ runner.os }}-
+            composer-
+
+      - name: "Install composer dependencies"
+        uses: php-actions/composer@d936bcb900310224b9089aff3337f2221a8df9a0
+        with:
+          php_version: ${{ matrix.php-version }}
+          dev: yes
+          args: --no-interaction --no-progress --optimize-autoloader
+
+      - name: "Run tests"
+        uses: php-actions/phpstan@7b9a9fb3d374ae61177749c96d6a9e13cb1dae8b
+        with:
+          php_version: ${{ matrix.php-version }}
+          php_extensions: ctype dom json libxml mbstring pdo simplexml tokenizer xml xmlwriter
+          configuration: phpstan.neon
+          memory_limit: 512M
+
+  unit-tests:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04]
+        php-version: [8.1]
+        symfony-version: ["5.4.*", "6.0.*", "6.1.*"]
+        experimental: [false]
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: ctype, dom, json, libxml, mbstring, pdo_sqlite, simplexml, tokenizer, xml, xmlwriter
+          coverage: none
+          tools: composer
+
+      - name: Specify symfony version
+        uses: jacobtomlinson/gha-find-replace@f485fdc3f67a6d87ae6e3d11e41f648c26d7aee3
+        with:
+          include: "composer.json"
+          find: "^5.4|^6.0"
+          replace: "${{ matrix.symfony-version }}"
+          regex: false
+
+      - name: "Get composer Cache directory"
+        id: composer-cache
+        run: |
+          echo "composer_cache_output_dir=dir::$(composer config cache-files-dir)" >> $GITHUB_ENV
+      #          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: "Cache composer dependencies"
+        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7
+        with:
+          path: ${{ env.composer_cache_output_dir }}
+          key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ matrix.symfony-version }}-${{ hashFiles('composer.*') }}
+          restore-keys: |
+            composer-${{ runner.os }}-${{ matrix.php-version }}-${{ matrix.symfony-version }}
+            composer-${{ runner.os }}-${{ matrix.php-version }}-
+            composer-${{ runner.os }}-
+            composer-
+
+      - name: "Install composer dependencies"
+        uses: php-actions/composer@d936bcb900310224b9089aff3337f2221a8df9a0
+        with:
+          php_version: ${{ matrix.php-version }}
+          dev: yes
+          args: --no-interaction --no-progress --optimize-autoloader
+
+      - name: "Run tests"
+        uses: php-actions/phpunit@0c0705453cbebd5eb02a87b5e2d9e46c9cd6b145
+        env:
+          CMLIFE_USERNAME: ${{ secrets.CMLIFE_USERNAME }}
+          CMLIFE_PASSWORD: ${{ secrets.CMLIFE_PASSWORD }}
+        with:
+          configuration: phpunit.xml.dist
+          php_version: ${{ matrix.php-version }}
+          php_extensions: ctype dom json libxml mbstring pdo_sqlite simplexml tokenizer xml xmlwriter
+
+  code-coverage:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-20.04 ]
+        php-version: [ 8.1 ]
+        experimental: [ false ]
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: ctype, dom, json, libxml, mbstring, pdo, simplexml, tokenizer, xdebug, xml, xmlwriter
+          coverage: xdebug
+          tools: composer
+
+      - name: "Get composer Cache directory"
+        id: composer-cache
+        run: |
+          echo "composer_cache_output_dir=dir::$(composer config cache-files-dir)" >> $GITHUB_ENV
+#          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: "Cache composer dependencies"
+        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7
+        with:
+          path: ${{ env.composer_cache_output_dir }}
+          key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('composer.*') }}
+          restore-keys: |
+            composer-${{ runner.os }}-${{ matrix.php-version }}-
+            composer-${{ runner.os }}-
+            composer-
+
+      - name: "Install composer dependencies"
+        uses: php-actions/composer@d936bcb900310224b9089aff3337f2221a8df9a0
+        with:
+          php_version: ${{ matrix.php-version }}
+          dev: yes
+          args: --no-interaction --no-progress --optimize-autoloader
+
+      - name: "Run tests"
+        uses: php-actions/phpunit@0c0705453cbebd5eb02a87b5e2d9e46c9cd6b145
+        env:
+          CMLIFE_USERNAME: ${{ secrets.CMLIFE_USERNAME }}
+          CMLIFE_PASSWORD: ${{ secrets.CMLIFE_PASSWORD }}
+          XDEBUG_MODE: coverage
+        with:
+          php_version: ${{ matrix.php-version }}
+          php_extensions: ctype dom json libxml mbstring pdo simplexml tokenizer xml xmlwriter xdebug
+          configuration: .github/workflows/phpunit.xml.dist
+
+      - name: "Upload coverage to Codecov"
+        uses: codecov/codecov-action@d9f34f8cd5cb3b3eb79b3e4b5dae3a16df499a70
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          flags: unittests
+          fail_ci_if_error: true
+          verbose: true
