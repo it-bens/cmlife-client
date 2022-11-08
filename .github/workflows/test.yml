@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
+        uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
 
       - name: Setup PHP
         uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4
@@ -39,7 +39,7 @@ jobs:
       #          echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: "Cache composer dependencies"
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7
+        uses: actions/cache@9a6a4f6079716b44e70b2e883cfdd6fb7d6ff5d9
         with:
           path: ${{ env.composer_cache_output_dir }}
           key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('composer.*') }}
@@ -49,14 +49,14 @@ jobs:
             composer-
 
       - name: "Install composer dependencies"
-        uses: php-actions/composer@d936bcb900310224b9089aff3337f2221a8df9a0
+        uses: php-actions/composer@07d90284c4c9b3837e5f961515a03f97c0f08e8c
         with:
           php_version: ${{ matrix.php-version }}
           dev: yes
           args: --no-interaction --no-progress --optimize-autoloader
 
       - name: "Run tests"
-        uses: php-actions/phpstan@7b9a9fb3d374ae61177749c96d6a9e13cb1dae8b
+        uses: php-actions/phpstan@b3e971486d738dc11affc1199c4735016cdb6b7b
         with:
           php_version: ${{ matrix.php-version }}
           php_extensions: ctype dom json libxml mbstring pdo simplexml tokenizer xml xmlwriter
@@ -77,7 +77,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
+        uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
 
       - name: Setup PHP
         uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4
@@ -88,7 +88,7 @@ jobs:
           tools: composer
 
       - name: Specify symfony version
-        uses: jacobtomlinson/gha-find-replace@f485fdc3f67a6d87ae6e3d11e41f648c26d7aee3
+        uses: jacobtomlinson/gha-find-replace@657b0d1fe020da9943d1702b576f5d37d43b9c03
         with:
           include: "composer.json"
           find: "^5.4|^6.0"
@@ -102,7 +102,7 @@ jobs:
       #          echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: "Cache composer dependencies"
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7
+        uses: actions/cache@9a6a4f6079716b44e70b2e883cfdd6fb7d6ff5d9
         with:
           path: ${{ env.composer_cache_output_dir }}
           key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ matrix.symfony-version }}-${{ hashFiles('composer.*') }}
@@ -113,14 +113,14 @@ jobs:
             composer-
 
       - name: "Install composer dependencies"
-        uses: php-actions/composer@d936bcb900310224b9089aff3337f2221a8df9a0
+        uses: php-actions/composer@07d90284c4c9b3837e5f961515a03f97c0f08e8c
         with:
           php_version: ${{ matrix.php-version }}
           dev: yes
           args: --no-interaction --no-progress --optimize-autoloader
 
       - name: "Run tests"
-        uses: php-actions/phpunit@0c0705453cbebd5eb02a87b5e2d9e46c9cd6b145
+        uses: php-actions/phpunit@67a9e0da5697cfb06fad7ff8b5598c47d8b6012a
         env:
           CMLIFE_USERNAME: ${{ secrets.CMLIFE_USERNAME }}
           CMLIFE_PASSWORD: ${{ secrets.CMLIFE_PASSWORD }}
@@ -144,7 +144,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@e2f20e631ae6d7dd3b768f56a5d2af784dd54791
+        uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
 
       - name: Setup PHP
         uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4
@@ -161,7 +161,7 @@ jobs:
 #          echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: "Cache composer dependencies"
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7
+        uses: actions/cache@9a6a4f6079716b44e70b2e883cfdd6fb7d6ff5d9
         with:
           path: ${{ env.composer_cache_output_dir }}
           key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('composer.*') }}
@@ -171,14 +171,14 @@ jobs:
             composer-
 
       - name: "Install composer dependencies"
-        uses: php-actions/composer@d936bcb900310224b9089aff3337f2221a8df9a0
+        uses: php-actions/composer@07d90284c4c9b3837e5f961515a03f97c0f08e8c
         with:
           php_version: ${{ matrix.php-version }}
           dev: yes
           args: --no-interaction --no-progress --optimize-autoloader
 
       - name: "Run tests"
-        uses: php-actions/phpunit@0c0705453cbebd5eb02a87b5e2d9e46c9cd6b145
+        uses: php-actions/phpunit@67a9e0da5697cfb06fad7ff8b5598c47d8b6012a
         env:
           CMLIFE_USERNAME: ${{ secrets.CMLIFE_USERNAME }}
           CMLIFE_PASSWORD: ${{ secrets.CMLIFE_PASSWORD }}
@@ -191,7 +191,7 @@ jobs:
           configuration: .github/workflows/phpunit.xml.dist
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@d9f34f8cd5cb3b3eb79b3e4b5dae3a16df499a70
+        uses: codecov/codecov-action@e0fbd592d323cb2991fb586fdd260734fcb41fcb
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
