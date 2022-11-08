@@ -1,0 +1,17 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "packageRules": [
+    {
+      "matchManagers": ["composer"],
+      "enabled": false
+    },
+    {
+      "matchDatasources": ["github-tags"],
+      "groupName": "github workflow actions",
+      "schedule": ["every weekend"]
+    }
+  ]
+}
