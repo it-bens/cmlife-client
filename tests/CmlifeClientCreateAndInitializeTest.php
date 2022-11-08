@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ITB\CmlifeClient\Tests;
 
 use Generator;
-use ITB\CmlifeClient\Authentication\Authenticator;
+use ITB\CmlifeClient\Authentication\UsernamePasswordAuthenticator;
 use ITB\CmlifeClient\CmlifeClient;
 use ITB\CmlifeClient\CmlifeClientInterface;
 use ITB\CmlifeClient\Connection\DataClient;
@@ -13,7 +13,6 @@ use ITB\CmlifeClient\Exception\AuthenticationException;
 use ITB\CmlifeClient\Exception\CourseRetrievalFailedException;
 use ITB\CmlifeClient\Exception\PersonRetrievalFailedException;
 use ITB\CmlifeClient\Exception\SemesterRetrievalFailedException;
-use ITB\CmlifeClient\Exception\MyStudiesRetrievalFailedException;
 use ITB\CmlifeClient\Exception\StorageException;
 use ITB\CmlifeClient\Exception\StudyRetrievalFailedException;
 use ITB\CmlifeClient\Storage\DataStorage;
@@ -44,8 +43,13 @@ final class CmlifeClientCreateAndInitializeTest extends TestCase
      */
     public function provideForTestFetchDataFromCmlifeWithDataClientExceptions(): Generator
     {
-        $authenticator = Authenticator::createWithDefaultHttpClient();
-        $authenticator->authenticate($_ENV['CMLIFE_USERNAME'], $_ENV['CMLIFE_PASSWORD']);
+        $authenticator = UsernamePasswordAuthenticator::createWithDefaultHttpClient();
+        $authenticator->authenticate(
+            [
+                UsernamePasswordAuthenticator::CREDENTIAL_NAME_USERNAME => $_ENV['CMLIFE_USERNAME'],
+                UsernamePasswordAuthenticator::CREDENTIAL_NAME_PASSWORD => $_ENV['CMLIFE_PASSWORD']
+            ]
+        );
         $originalDataClient = DataClient::createWithDefaultHttpClient($authenticator);
 
         $dataStorage = new DataStorage(['driver' => 'pdo_sqlite', 'path' => '/tmp' . uniqid(more_entropy: true) . '.sqlite']);
@@ -76,7 +80,12 @@ final class CmlifeClientCreateAndInitializeTest extends TestCase
      */
     public function testCreateWithValidCredentials(string $username, string $password): void
     {
-        $cmlifeClient = CmlifeClient::create($username, $password);
+        $cmlifeClient = CmlifeClient::createWithUsernameAndPasswordAuthentication(
+            [
+                UsernamePasswordAuthenticator::CREDENTIAL_NAME_USERNAME => $username,
+                UsernamePasswordAuthenticator::CREDENTIAL_NAME_PASSWORD => $password
+            ]
+        );
         $cmlifeClient->fetchDataFromCmlife();
 
         $this->assertInstanceOf(CmlifeClientInterface::class, $cmlifeClient);

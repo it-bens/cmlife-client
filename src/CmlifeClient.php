@@ -7,7 +7,8 @@ namespace ITB\CmlifeClient;
 use DateTimeImmutable;
 use GuzzleHttp\Promise\Utils;
 use Http\Promise\Promise;
-use ITB\CmlifeClient\Authentication\Authenticator;
+use ITB\CmlifeClient\Authentication\CookieValuesAuthenticator;
+use ITB\CmlifeClient\Authentication\UsernamePasswordAuthenticator;
 use ITB\CmlifeClient\Connection\DataClient;
 use ITB\CmlifeClient\Connection\DataClientInterface;
 use ITB\CmlifeClient\Connection\RequestData;
@@ -58,16 +59,31 @@ final class CmlifeClient implements CmlifeClientInterface
     }
 
     /**
-     * @param string $username
-     * @param string $password
+     * @param array{'sessionId': string, 'xsrfToken': string} $credentials
      * @return CmlifeClient
      * @throws AuthenticationException
      * @throws StorageException
      */
-    public static function create(string $username, string $password): CmlifeClient
+    public static function createWithCookieValuesAuthentication(array $credentials): CmlifeClient
     {
-        $authenticator = Authenticator::createWithDefaultHttpClient();
-        $authenticator->authenticate($username, $password);
+        $authenticator = CookieValuesAuthenticator::createWithDefaultHttpClient();
+        $authenticator->authenticate($credentials);
+        $dataClient = DataClient::createWithDefaultHttpClient($authenticator);
+        $dataStorage = DataStorage::createWithInMemorySqliteDatabase();
+
+        return new self($dataClient, $dataStorage);
+    }
+
+    /**
+     * @param array{'username': string, 'password': string} $credentials
+     * @return CmlifeClient
+     * @throws AuthenticationException
+     * @throws StorageException
+     */
+    public static function createWithUsernameAndPasswordAuthentication(array $credentials): CmlifeClient
+    {
+        $authenticator = UsernamePasswordAuthenticator::createWithDefaultHttpClient();
+        $authenticator->authenticate($credentials);
         $dataClient = DataClient::createWithDefaultHttpClient($authenticator);
         $dataStorage = DataStorage::createWithInMemorySqliteDatabase();
 

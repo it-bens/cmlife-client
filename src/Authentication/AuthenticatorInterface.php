@@ -17,13 +17,12 @@ interface AuthenticatorInterface
     public function addAuthenticationHeadersToHttpClient(HttpClientInterface $client): HttpClientInterface;
 
     /**
-     * @param string $username
-     * @param string $password
-     * @param bool $forceAuthentication
+     * @param array<string, mixed> $credentials
+     * @param bool $forceAuthenticationRenewal
      * @return void
      * @throws AuthenticationException
      */
-    public function authenticate(string $username, string $password, bool $forceAuthentication = false): void;
+    public function authenticate(array $credentials, bool $forceAuthenticationRenewal = false): void;
 
     /**
      * @return array<string, string>

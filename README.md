@@ -36,9 +36,10 @@ $cmlifeClient = new \ITB\CmlifeClient\CmlifeClient($someDataClient, $someDataSto
 ```
 
 The `create` method requires username and password to create the `Authenticator` and use its authentication. The data client is created with the default Symfony `HttpClient`. The data storage is created with an in-memory sqlite database.
+
 ```php
 # via create
-$cmlifeClient = \ITB\CmlifeClient\CmlifeClient::create($username, $password);
+$cmlifeClient = \ITB\CmlifeClient\CmlifeClient::createWithUsernameAndPasswordAuthentication($username, $password);
 ```
 
 After creation, no other method than `fetchDataFromCmlife` can be used. Only after that method was executed, the data from cmlife can be used.

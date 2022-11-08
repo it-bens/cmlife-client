@@ -4,27 +4,25 @@ declare(strict_types=1);
 
 namespace ITB\CmlifeClient\Authentication;
 
-use ITB\CmlifeClient\Authentication\Exception\AuthenticationClientErrorException;
-use ITB\CmlifeClient\Authentication\Exception\AuthenticationExpiredException;
-use ITB\CmlifeClient\Authentication\Exception\AuthenticationRequestException;
-use ITB\CmlifeClient\Authentication\Exception\AuthenticationServerErrorException;
-use ITB\CmlifeClient\Authentication\Exception\InvalidCredentialsException;
-use ITB\CmlifeClient\Authentication\Exception\MissingCookiesException;
+use ITB\CmlifeClient\Authentication\AuthenticationTokensException\AuthenticationClientErrorException;
+use ITB\CmlifeClient\Authentication\AuthenticationTokensException\AuthenticationExpiredException;
+use ITB\CmlifeClient\Authentication\AuthenticationTokensException\AuthenticationRequestException;
+use ITB\CmlifeClient\Authentication\AuthenticationTokensException\AuthenticationServerErrorException;
+use ITB\CmlifeClient\Authentication\AuthenticationTokensException\InvalidCredentialsException;
 use ITB\CmlifeClient\Exception\AuthenticationException;
 use LogicException;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\BrowserKit\CookieJar;
-use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class AuthenticationTokens
 {
-    private const URI_FOR_AUTHENTICATION_CHECK = 'https://my.uni-bayreuth.de/v3/cmco/api/courses/searches/minimal';
+    public const COOKIE_KEY_SESSION = 'SESSION';
+    public const COOKIE_KEY_XSRF_TOKEN = 'XSRF-TOKEN';
 
-    private const COOKIE_KEY_SESSION = 'SESSION';
-    private const COOKIE_KEY_XSRF_TOKEN = 'XSRF-TOKEN';
+    private const URI_FOR_AUTHENTICATION_CHECK = 'https://my.uni-bayreuth.de/v3/cmco/api/courses/searches/minimal';
 
     private readonly CookieJar $cookieJar;
 
@@ -46,35 +44,6 @@ final class AuthenticationTokens
     }
 
     /**
-     * @param HttpBrowser $browser
-     * @param HttpClientInterface $client
-     * @return AuthenticationTokens
-     * @throws AuthenticationException
-     */
-    public static function fromAuthenticationBrowser(HttpBrowser $browser, HttpClientInterface $client): AuthenticationTokens
-    {
-        $missingCookies = [];
-
-        $session = $browser->getCookieJar()->get(self::COOKIE_KEY_SESSION, domain: 'my.uni-bayreuth.de');
-        if (null === $session) {
-            $missingCookies[] = self::COOKIE_KEY_SESSION;
-        }
-        /** @var Cookie $session */
-
-        $xsrfToken = $browser->getCookieJar()->get(self::COOKIE_KEY_XSRF_TOKEN, domain: 'my.uni-bayreuth.de');
-        if (null === $xsrfToken) {
-            $missingCookies[] = self::COOKIE_KEY_XSRF_TOKEN;
-        }
-        /** @var Cookie $xsrfToken */
-
-        if (0 !== count($missingCookies)) {
-            throw MissingCookiesException::create($missingCookies);
-        }
-
-        return new self($session, $xsrfToken, $client);
-    }
-
-    /**
      * @param HttpClientInterface $client
      * @return HttpClientInterface
      * @throws AuthenticationException
@@ -86,7 +55,7 @@ final class AuthenticationTokens
             throw AuthenticationExpiredException::create();
         }
 
-        return $client->withOptions(['headers' => ['X-XSRF-TOKEN' => $this->xsrfTokenCookie->getRawValue(), 'Cookie' => $this->toCookieHeader()]]);
+        return $client->withOptions(['headers' => $this->getAuthenticationHeaders()]);
     }
 
     /**
@@ -135,12 +104,12 @@ final class AuthenticationTokens
             in_array(
                 $statusCode,
                 [
-                Response::HTTP_UNAUTHORIZED,
-                Response::HTTP_FORBIDDEN,
-                Response::HTTP_MOVED_PERMANENTLY,
-                Response::HTTP_FOUND,
-                Response::HTTP_TEMPORARY_REDIRECT,
-                Response::HTTP_PERMANENTLY_REDIRECT
+                    Response::HTTP_UNAUTHORIZED,
+                    Response::HTTP_FORBIDDEN,
+                    Response::HTTP_MOVED_PERMANENTLY,
+                    Response::HTTP_FOUND,
+                    Response::HTTP_TEMPORARY_REDIRECT,
+                    Response::HTTP_PERMANENTLY_REDIRECT
                 ]
             )
         ) {

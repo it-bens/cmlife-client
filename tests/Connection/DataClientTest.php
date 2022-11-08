@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ITB\CmlifeClient\Tests\Connection;
 
 use Generator;
-use ITB\CmlifeClient\Authentication\Authenticator;
+use ITB\CmlifeClient\Authentication\UsernamePasswordAuthenticator;
 use ITB\CmlifeClient\Connection\DataClient;
 use ITB\CmlifeClient\Connection\RequestData;
 use ITB\CmlifeClient\Exception\AuthenticationException;
@@ -24,8 +24,13 @@ final class DataClientTest extends TestCase
      */
     public static function setUpBeforeClass(): void
     {
-        $authenticator = Authenticator::createWithDefaultHttpClient();
-        $authenticator->authenticate($_ENV['CMLIFE_USERNAME'], $_ENV['CMLIFE_PASSWORD']);
+        $authenticator = UsernamePasswordAuthenticator::createWithDefaultHttpClient();
+        $authenticator->authenticate(
+            [
+                UsernamePasswordAuthenticator::CREDENTIAL_NAME_USERNAME => $_ENV['CMLIFE_USERNAME'],
+                UsernamePasswordAuthenticator::CREDENTIAL_NAME_PASSWORD => $_ENV['CMLIFE_PASSWORD']
+            ]
+        );
 
         $httpClient = (new DataClientTest())->createMock(HttpClientInterface::class);
         $httpClient->expects((new DataClientTest())->any())->method('request')->willThrowException(

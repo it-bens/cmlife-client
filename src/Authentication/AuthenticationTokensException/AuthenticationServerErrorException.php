@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ITB\CmlifeClient\Authentication\Exception;
+namespace ITB\CmlifeClient\Authentication\AuthenticationTokensException;
 
 use ITB\CmlifeClient\Exception\AuthenticationException;
 use RuntimeException;
