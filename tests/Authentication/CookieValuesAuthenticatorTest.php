@@ -8,60 +8,69 @@ use Generator;
 use ITB\CmlifeClient\Authentication\AuthenticatorException\MissingCredentialException;
 use ITB\CmlifeClient\Authentication\CookieValuesAuthenticator;
 use ITB\CmlifeClient\Authentication\CookieValuesAuthenticatorException\ForcedAuthenticationRenewalNotAllowedException;
+use ITB\CmlifeClient\Authentication\UsernamePasswordAuthenticator;
 use ITB\CmlifeClient\Exception\AuthenticationException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\HttpClient;
 
 final class CookieValuesAuthenticatorTest extends TestCase
 {
+    use UsernameAndPasswordToCookieValuesTrait;
+
     /**
      * @return Generator
+     * @throws AuthenticationException
      */
     public function provideForTestAuthenticateWithMissingCredential(): Generator
     {
         $httpClient = HttpClient::create();
         $authenticator = new CookieValuesAuthenticator($httpClient);
+        $credentials = $this->createCookieValuesFromUsernameAndPassword($_ENV['CMLIFE_USERNAME'], $_ENV['CMLIFE_PASSWORD']);
 
         yield 'session id missing' => [
             $authenticator,
-            [CookieValuesAuthenticator::CREDENTIAL_NAME_XSRF_TOKEN => $_ENV['CMLIFE_XSRF_TOKEN']],
+            [CookieValuesAuthenticator::CREDENTIAL_NAME_XSRF_TOKEN => $credentials['xsrfToken']],
             CookieValuesAuthenticator::CREDENTIAL_NAME_SESSION_ID
         ];
         yield 'xsrf token missing' => [
             $authenticator,
-            [CookieValuesAuthenticator::CREDENTIAL_NAME_SESSION_ID => $_ENV['CMLIFE_SESSION_ID']],
+            [CookieValuesAuthenticator::CREDENTIAL_NAME_SESSION_ID => $credentials['sessionId']],
             CookieValuesAuthenticator::CREDENTIAL_NAME_XSRF_TOKEN
         ];
     }
 
     /**
      * @return Generator
+     * @throws AuthenticationException
      */
     public function provideForTestAuthenticateWithValidCredentials(): Generator
     {
         $httpClient = HttpClient::create();
+        $credentials = $this->createCookieValuesFromUsernameAndPassword($_ENV['CMLIFE_USERNAME'], $_ENV['CMLIFE_PASSWORD']);
 
         yield [
             new CookieValuesAuthenticator($httpClient),
             [
-                CookieValuesAuthenticator::CREDENTIAL_NAME_SESSION_ID => $_ENV['CMLIFE_SESSION_ID'],
-                CookieValuesAuthenticator::CREDENTIAL_NAME_XSRF_TOKEN => $_ENV['CMLIFE_XSRF_TOKEN']
+                CookieValuesAuthenticator::CREDENTIAL_NAME_SESSION_ID => $credentials['sessionId'],
+                CookieValuesAuthenticator::CREDENTIAL_NAME_XSRF_TOKEN => $credentials['xsrfToken']
             ]
         ];
     }
 
     /**
      * @return Generator
+     * @throws AuthenticationException
      */
     public function provideForTestAuthenticationRepeated(): Generator
     {
         $httpClient = HttpClient::create();
+        $credentials = $this->createCookieValuesFromUsernameAndPassword($_ENV['CMLIFE_USERNAME'], $_ENV['CMLIFE_PASSWORD']);
 
         yield [
             new CookieValuesAuthenticator($httpClient),
             [
-                CookieValuesAuthenticator::CREDENTIAL_NAME_SESSION_ID => $_ENV['CMLIFE_SESSION_ID'],
-                CookieValuesAuthenticator::CREDENTIAL_NAME_XSRF_TOKEN => $_ENV['CMLIFE_XSRF_TOKEN']
+                CookieValuesAuthenticator::CREDENTIAL_NAME_SESSION_ID => $credentials['sessionId'],
+                CookieValuesAuthenticator::CREDENTIAL_NAME_XSRF_TOKEN => $credentials['sessionId']
             ]
         ];
     }
