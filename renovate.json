@@ -7,6 +7,11 @@
     {
       "matchManagers": ["composer"],
       "enabled": false
+    },
+    {
+      "matchDatasources": ["github-tags"],
+      "groupName": "github workflow actions",
+      "schedule": ["every weekend"]
     }
   ]
 }
