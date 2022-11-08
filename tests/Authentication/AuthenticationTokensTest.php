@@ -26,14 +26,17 @@ use Throwable;
 
 final class AuthenticationTokensTest extends TestCase
 {
+    use UsernameAndPasswordToCookieValuesTrait;
+
     /**
      * @return Generator
      * @throws AuthenticationException
      */
     public function provideForTestAddAuthenticationHeadersToHttpClientWithExpiredAuthentication(): Generator
     {
-        $sessionIdCookie = $this->createValidSessionIdCookie();
-        $xsrfTokenCookie = $this->createValidXsrfTokenCookie();
+        $credentials = $this->createCookieValuesFromUsernameAndPassword($_ENV['CMLIFE_USERNAME'], $_ENV['CMLIFE_PASSWORD']);
+        $sessionIdCookie = $this->createSessionIdCookie($credentials['sessionId']);
+        $xsrfTokenCookie = $this->createXsrfTokenCookie($credentials['xsrfToken']);
 
         $httpClient = new MockHttpClient(
             [new MockResponse('', ['http_code' => Response::HTTP_OK]), new MockResponse('', ['http_code' => Response::HTTP_UNAUTHORIZED])]
@@ -49,8 +52,9 @@ final class AuthenticationTokensTest extends TestCase
      */
     public function provideForTestAddAuthenticationHeadersToHttpClientWithUnexpiredAuthentication(): Generator
     {
-        $sessionIdCookie = $this->createValidSessionIdCookie();
-        $xsrfTokenCookie = $this->createValidXsrfTokenCookie();
+        $credentials = $this->createCookieValuesFromUsernameAndPassword($_ENV['CMLIFE_USERNAME'], $_ENV['CMLIFE_PASSWORD']);
+        $sessionIdCookie = $this->createSessionIdCookie($credentials['sessionId']);
+        $xsrfTokenCookie = $this->createXsrfTokenCookie($credentials['xsrfToken']);
 
         $httpClient = HttpClient::create();
         $authenticationTokens = new AuthenticationTokens($sessionIdCookie, $xsrfTokenCookie, $httpClient);
@@ -64,31 +68,35 @@ final class AuthenticationTokensTest extends TestCase
     public function provideForTestConstructWithInvalidCredentials(): Generator
     {
         $httpClient = HttpClient::create();
-        $sessionIdCookie = $this->createInvalidSessionIdCookie();
-        $xsrfTokenCookie = $this->createInvalidXsrfTokenCookie();
+        $sessionIdCookie = $this->createSessionIdCookie('11111111');
+        $xsrfTokenCookie = $this->createXsrfTokenCookie('11111111');
 
         yield [$httpClient, $sessionIdCookie, $xsrfTokenCookie];
     }
 
     /**
      * @return Generator
+     * @throws AuthenticationException
      */
     public function provideForTestConstructWithValidCredentials(): Generator
     {
         $httpClient = HttpClient::create();
-        $sessionIdCookie = $this->createValidSessionIdCookie();
-        $xsrfTokenCookie = $this->createValidXsrfTokenCookie();
+        $credentials = $this->createCookieValuesFromUsernameAndPassword($_ENV['CMLIFE_USERNAME'], $_ENV['CMLIFE_PASSWORD']);
+        $sessionIdCookie = $this->createSessionIdCookie($credentials['sessionId']);
+        $xsrfTokenCookie = $this->createXsrfTokenCookie($credentials['xsrfToken']);
 
         yield [$httpClient, $sessionIdCookie, $xsrfTokenCookie];
     }
 
     /**
      * @return Generator
+     * @throws AuthenticationException
      */
     public function provideForTestConstructionWithMockHttpClientReturningStatusCodes(): Generator
     {
-        $sessionIdCookie = $this->createValidSessionIdCookie();
-        $xsrfTokenCookie = $this->createValidXsrfTokenCookie();
+        $credentials = $this->createCookieValuesFromUsernameAndPassword($_ENV['CMLIFE_USERNAME'], $_ENV['CMLIFE_PASSWORD']);
+        $sessionIdCookie = $this->createSessionIdCookie($credentials['sessionId']);
+        $xsrfTokenCookie = $this->createXsrfTokenCookie($credentials['xsrfToken']);
 
         // transport exception
         $httpClient = new MockHttpClient(new MockResponse('', ['error' => true]));
@@ -131,8 +139,9 @@ final class AuthenticationTokensTest extends TestCase
      */
     public function provideForTestGetAuthenticationHeadersWithExpiredAuthentication(): Generator
     {
-        $sessionIdCookie = $this->createValidSessionIdCookie();
-        $xsrfTokenCookie = $this->createValidXsrfTokenCookie();
+        $credentials = $this->createCookieValuesFromUsernameAndPassword($_ENV['CMLIFE_USERNAME'], $_ENV['CMLIFE_PASSWORD']);
+        $sessionIdCookie = $this->createSessionIdCookie($credentials['sessionId']);
+        $xsrfTokenCookie = $this->createXsrfTokenCookie($credentials['xsrfToken']);
 
         $httpClient = new MockHttpClient(
             [new MockResponse('', ['http_code' => Response::HTTP_OK]), new MockResponse('', ['http_code' => Response::HTTP_UNAUTHORIZED])]
@@ -244,13 +253,14 @@ final class AuthenticationTokensTest extends TestCase
     }
 
     /**
+     * @param string $sessionId
      * @return Cookie
      */
-    private function createInvalidSessionIdCookie(): Cookie
+    private function createSessionIdCookie(string $sessionId): Cookie
     {
         return new Cookie(
             AuthenticationTokens::COOKIE_KEY_SESSION,
-            '11111111',
+            $sessionId,
             null,
             '/',
             'my.uni-bayreuth.de',
@@ -261,47 +271,14 @@ final class AuthenticationTokensTest extends TestCase
     }
 
     /**
+     * @param string $xsrfToken
      * @return Cookie
      */
-    private function createInvalidXsrfTokenCookie(): Cookie
+    private function createXsrfTokenCookie(string $xsrfToken): Cookie
     {
         return new Cookie(
             AuthenticationTokens::COOKIE_KEY_XSRF_TOKEN,
-            '11111111',
-            null,
-            '/',
-            'my.uni-bayreuth.de',
-            true,
-            true,
-            samesite: 'Lax'
-        );
-    }
-
-    /**
-     * @return Cookie
-     */
-    private function createValidSessionIdCookie(): Cookie
-    {
-        return new Cookie(
-            AuthenticationTokens::COOKIE_KEY_SESSION,
-            $_ENV['CMLIFE_SESSION_ID'],
-            null,
-            '/',
-            'my.uni-bayreuth.de',
-            true,
-            true,
-            samesite: 'Lax'
-        );
-    }
-
-    /**
-     * @return Cookie
-     */
-    private function createValidXsrfTokenCookie(): Cookie
-    {
-        return new Cookie(
-            AuthenticationTokens::COOKIE_KEY_XSRF_TOKEN,
-            $_ENV['CMLIFE_XSRF_TOKEN'],
+            $xsrfToken,
             null,
             '/',
             'my.uni-bayreuth.de',

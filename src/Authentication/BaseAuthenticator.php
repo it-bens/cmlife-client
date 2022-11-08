@@ -27,7 +27,7 @@ abstract class BaseAuthenticator implements AuthenticatorInterface
     }
 
     /**
-     * @return array<string, string>
+     * @return array{'X-XSRF-TOKEN': string, 'Cookie': string}
      * @throws AuthenticationException
      */
     public function getAuthenticationHeaders(): array
