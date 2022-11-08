@@ -24,8 +24,10 @@ It requires at least PHP 8.1. Because requests to the API are done asynchronousl
 
 ## How to use the client?
 
-First you should be aware, that all actions done by this client (read and write) requires authentication. This package provides an `Authenticator` which uses username and password.
-The client only requires an implementation of the `AuthenticatorInterface`. Alternative implementations may be added later to this package or can be created by yourself.
+First you should be aware, that all actions done by this client (read and write) requires authentication. This package provides an `UsernamePasswordAuthenticator` which uses username and password.
+The client only requires an implementation of the `AuthenticatorInterface`. 
+
+As an alternative a `CookieValueAuthenticator` is provided by this package. It requires the session id and the xsrf token cookie values used by a browser to authenticate at cmlife. The value can be extracted from a browser like Firefox, Chrome or Safari. 
 
 ### Client creation
 
@@ -35,10 +37,18 @@ The client can be created via constructor or to keep thing simple, by its own fa
 $cmlifeClient = new \ITB\CmlifeClient\CmlifeClient($someDataClient, $someDataStorage);
 ```
 
-The `create` method requires username and password to create the `Authenticator` and use its authentication. The data client is created with the default Symfony `HttpClient`. The data storage is created with an in-memory sqlite database.
+The `createWithUsernameAndPasswordAuthentication` method requires username and password to create the `Authenticator` and use its authentication. The data client is created with the default Symfony `HttpClient`. The data storage is created with an in-memory sqlite database.
+
 ```php
-# via create
-$cmlifeClient = \ITB\CmlifeClient\CmlifeClient::create($username, $password);
+# via static factory method
+$cmlifeClient = \ITB\CmlifeClient\CmlifeClient::createWithUsernameAndPasswordAuthentication(['username' => $username, 'password' => $password]);
+```
+
+As mentioned, the `CookieValueAuthenticator` can be used as well.
+
+```php
+# via static factory method
+$cmlifeClient = \ITB\CmlifeClient\CmlifeClient::createWithCookieValuesAuthentication(['sessionId' => $sessionId, 'xsrfToken' => $xsrfToken]);
 ```
 
 After creation, no other method than `fetchDataFromCmlife` can be used. Only after that method was executed, the data from cmlife can be used.

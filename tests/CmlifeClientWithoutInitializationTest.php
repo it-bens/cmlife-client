@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ITB\CmlifeClient\Tests;
 
 use Generator;
+use ITB\CmlifeClient\Authentication\UsernamePasswordAuthenticator;
 use ITB\CmlifeClient\CmlifeClient;
 use ITB\CmlifeClient\Exception\AuthenticationException;
 use ITB\CmlifeClient\Exception\CmlifeDataNotFetchedException;
@@ -23,7 +24,12 @@ final class CmlifeClientWithoutInitializationTest extends TestCase
      */
     public static function setUpBeforeClass(): void
     {
-        $cmlifeClient = CmlifeClient::create($_ENV['CMLIFE_USERNAME'], $_ENV['CMLIFE_PASSWORD']);
+        $cmlifeClient = CmlifeClient::createWithUsernameAndPasswordAuthentication(
+            [
+                UsernamePasswordAuthenticator::CREDENTIAL_NAME_USERNAME => $_ENV['CMLIFE_USERNAME'],
+                UsernamePasswordAuthenticator::CREDENTIAL_NAME_PASSWORD => $_ENV['CMLIFE_PASSWORD']
+            ]
+        );
 
         self::$cmlifeClient = $cmlifeClient;
     }
