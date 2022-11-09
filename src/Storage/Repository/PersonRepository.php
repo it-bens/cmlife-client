@@ -25,6 +25,15 @@ final class PersonRepository
     }
 
     /**
+     * @param string $personUri
+     * @return Person|null
+     */
+    public function find(string $personUri): ?Person
+    {
+        return $this->entityRepository->find($personUri);
+    }
+
+    /**
      * @return Person
      * @throws StorageException
      */

@@ -128,4 +128,64 @@ final class DataStorage implements DataStorageInterface
     {
         return $this->studyRepository;
     }
+
+    /**
+     * @param Course $course
+     * @return void
+     * @throws ORMException
+     */
+    public function persistCourse(Course $course): void
+    {
+        $persistedCourse = $this->courseRepository->find($course->getId());
+        if (null !== $persistedCourse) {
+            $this->entityManager->remove($persistedCourse);
+        }
+
+        $this->entityManager->persist($course);
+    }
+
+    /**
+     * @param Person $person
+     * @return void
+     * @throws ORMException
+     */
+    public function persistPerson(Person $person): void
+    {
+        $persistedPerson = $this->personRepository->find($person->getUri());
+        if (null !== $persistedPerson) {
+            $this->entityManager->remove($persistedPerson);
+        }
+
+        $this->entityManager->persist($person);
+    }
+
+    /**
+     * @param Semester $semester
+     * @return void
+     * @throws ORMException
+     */
+    public function persistSemester(Semester $semester): void
+    {
+        $persistedSemester = $this->semesterRepository->find($semester->getId());
+        if (null !== $persistedSemester) {
+            $this->entityManager->remove($persistedSemester);
+        }
+
+        $this->entityManager->persist($semester);
+    }
+
+    /**
+     * @param Study $study
+     * @return void
+     * @throws ORMException
+     */
+    public function persistStudy(Study $study): void
+    {
+        $persistedStudy = $this->studyRepository->find($study->getId());
+        if (null !== $persistedStudy) {
+            $this->entityManager->remove($study);
+        }
+
+        $this->entityManager->persist($study);
+    }
 }
