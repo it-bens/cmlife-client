@@ -26,6 +26,15 @@ final class CourseRepository
     }
 
     /**
+     * @param int $courseId
+     * @return Course|null
+     */
+    public function find(int $courseId): ?Course
+    {
+        return $this->entityRepository->find($courseId);
+    }
+
+    /**
      * @param LinkNode[] $linkNodes
      * @return Course[]
      * @throws CourseSearchWithLinkNodesAndSemesterFailedException

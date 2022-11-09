@@ -243,7 +243,7 @@ final class CmlifeClient implements CmlifeClientInterface
             }
             foreach ($pagedCoursesData['content'] as $courseData) {
                 $course = Course::create($courseData, $semester);
-                $this->dataStorage->getEntityManager()->persist($course);
+                $this->dataStorage->persistCourse($course);
             }
         };
 
@@ -267,7 +267,7 @@ final class CmlifeClient implements CmlifeClientInterface
             }
 
             $person = Person::create($personData, true);
-            $this->dataStorage->getEntityManager()->persist($person);
+            $this->dataStorage->persistPerson($person);
         };
 
         return $this->dataClient->fetchDataAsync(
@@ -309,7 +309,7 @@ final class CmlifeClient implements CmlifeClientInterface
             }
 
             $study = Study::create($studyData);
-            $this->dataStorage->getEntityManager()->persist($study);
+            $this->dataStorage->persistStudy($study);
         };
 
         return $this->dataClient->fetchAllDataAsync($requestDatasets, $onFailureCallback, $onSuccessCallback);
@@ -333,7 +333,7 @@ final class CmlifeClient implements CmlifeClientInterface
             }
 
             $semester = Semester::create($semesterData);
-            $this->dataStorage->getEntityManager()->persist($semester);
+            $this->dataStorage->persistSemester($semester);
         };
 
         return $this->dataClient->fetchDataAsync(

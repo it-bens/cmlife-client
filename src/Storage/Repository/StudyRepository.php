@@ -22,6 +22,15 @@ final class StudyRepository
     }
 
     /**
+     * @param int $studyId
+     * @return Study|null
+     */
+    public function find(int $studyId): ?Study
+    {
+        return $this->entityRepository->find($studyId);
+    }
+
+    /**
      * @return Study[]
      */
     public function findAll(): array
