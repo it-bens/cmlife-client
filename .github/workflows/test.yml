@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
+        uses: actions/checkout@5c3ccc22eb2c950a0fa5bc7c47190d8e3f7e681a
 
       - name: Setup PHP
         uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4
@@ -49,14 +49,14 @@ jobs:
             composer-
 
       - name: "Install composer dependencies"
-        uses: php-actions/composer@07d90284c4c9b3837e5f961515a03f97c0f08e8c
+        uses: php-actions/composer@58260d1d3c7c1576becac3ac182175adf510e953
         with:
           php_version: ${{ matrix.php-version }}
           dev: yes
           args: --no-interaction --no-progress --optimize-autoloader
 
       - name: "Run tests"
-        uses: php-actions/phpstan@b3e971486d738dc11affc1199c4735016cdb6b7b
+        uses: php-actions/phpstan@9a3628e7fe886e0a95d0d0a966ecaddee9ecd93a
         with:
           php_version: ${{ matrix.php-version }}
           php_extensions: ctype dom json libxml mbstring pdo simplexml tokenizer xml xmlwriter
@@ -77,7 +77,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
+        uses: actions/checkout@5c3ccc22eb2c950a0fa5bc7c47190d8e3f7e681a
 
       - name: Setup PHP
         uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4
@@ -113,14 +113,14 @@ jobs:
             composer-
 
       - name: "Install composer dependencies"
-        uses: php-actions/composer@07d90284c4c9b3837e5f961515a03f97c0f08e8c
+        uses: php-actions/composer@58260d1d3c7c1576becac3ac182175adf510e953
         with:
           php_version: ${{ matrix.php-version }}
           dev: yes
           args: --no-interaction --no-progress --optimize-autoloader
 
       - name: "Run tests"
-        uses: php-actions/phpunit@67a9e0da5697cfb06fad7ff8b5598c47d8b6012a
+        uses: php-actions/phpunit@aed47a6852905dbd05b7c1a47c526b38fcc4bc17
         env:
           CMLIFE_USERNAME: ${{ secrets.CMLIFE_USERNAME }}
           CMLIFE_PASSWORD: ${{ secrets.CMLIFE_PASSWORD }}
@@ -144,7 +144,7 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@1f9a0c22da41e6ebfa534300ef656657ea2c6707
+        uses: actions/checkout@5c3ccc22eb2c950a0fa5bc7c47190d8e3f7e681a
 
       - name: Setup PHP
         uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4
@@ -171,14 +171,14 @@ jobs:
             composer-
 
       - name: "Install composer dependencies"
-        uses: php-actions/composer@07d90284c4c9b3837e5f961515a03f97c0f08e8c
+        uses: php-actions/composer@58260d1d3c7c1576becac3ac182175adf510e953
         with:
           php_version: ${{ matrix.php-version }}
           dev: yes
           args: --no-interaction --no-progress --optimize-autoloader
 
       - name: "Run tests"
-        uses: php-actions/phpunit@67a9e0da5697cfb06fad7ff8b5598c47d8b6012a
+        uses: php-actions/phpunit@aed47a6852905dbd05b7c1a47c526b38fcc4bc17
         env:
           CMLIFE_USERNAME: ${{ secrets.CMLIFE_USERNAME }}
           CMLIFE_PASSWORD: ${{ secrets.CMLIFE_PASSWORD }}
