@@ -35,6 +35,14 @@ final class CourseRepository
     }
 
     /**
+     * @return Course[]
+     */
+    public function findAll(): array
+    {
+        return $this->entityRepository->findAll();
+    }
+
+    /**
      * @param LinkNode[] $linkNodes
      * @return Course[]
      * @throws CourseSearchWithLinkNodesAndSemesterFailedException

@@ -76,6 +76,18 @@ final class StudyTest extends TestCase
     }
 
     /**
+     * @return Generator
+     */
+    public function provideForTestUpdate(): Generator
+    {
+        include_once __DIR__ . '/../Fixtures/study.php';
+        $study = Study::create(getStudyData());
+        $studyUpdate = Study::create(getStudyUpdateData());
+
+        yield [$study, $studyUpdate];
+    }
+
+    /**
      * @dataProvider provideForTestCreateStudy
      *
      * @param array<string, mixed> $studyData
@@ -113,18 +125,6 @@ final class StudyTest extends TestCase
     }
 
     /**
-     * @dataProvider provideForTestGetUri
-     *
-     * @param Study $study
-     * @param string $expectedUri
-     * @return void
-     */
-    public function testGetUri(Study $study, string $expectedUri): void
-    {
-        $this->assertEquals($expectedUri, $study->getUri());
-    }
-
-    /**
      * @dataProvider provideForTestGetProgramDegree
      *
      * @param Study $study
@@ -146,5 +146,36 @@ final class StudyTest extends TestCase
     public function testGetProgramSubject(Study $study, string $expectedProgramSubject): void
     {
         $this->assertEquals($expectedProgramSubject, $study->getProgramSubject());
+    }
+
+    /**
+     * @dataProvider provideForTestGetUri
+     *
+     * @param Study $study
+     * @param string $expectedUri
+     * @return void
+     */
+    public function testGetUri(Study $study, string $expectedUri): void
+    {
+        $this->assertEquals($expectedUri, $study->getUri());
+    }
+
+    /**
+     * @dataProvider provideForTestUpdate
+     *
+     * @param Study $study
+     * @param Study $studyUpdate
+     * @return void
+     */
+    public function testUpdate(Study $study, Study $studyUpdate): void
+    {
+        $this->assertNotEquals($studyUpdate->getProgramSubject(), $study->getProgramSubject());
+        $this->assertNotEquals($studyUpdate->getProgramDegree(), $study->getProgramDegree());
+        $this->assertNotEquals($studyUpdate->getCurriculum()->getCurriculumDocumentUrl(), $study->getCurriculum()->getCurriculumDocumentUrl());
+
+        $study->update($studyUpdate);
+        $this->assertEquals($studyUpdate->getProgramSubject(), $study->getProgramSubject());
+        $this->assertEquals($studyUpdate->getProgramDegree(), $study->getProgramDegree());
+        $this->assertEquals($studyUpdate->getCurriculum()->getCurriculumDocumentUrl(), $study->getCurriculum()->getCurriculumDocumentUrl());
     }
 }

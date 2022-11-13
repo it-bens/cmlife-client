@@ -26,9 +26,9 @@ final class Curriculum
         #[ORM\Column(name: 'uri', type: 'string')]
         private readonly string $uri,
         #[ORM\Column(name: 'study_plan_url', type: 'string', nullable: true)]
-        private readonly ?string $studyPlanUrl,
+        private ?string $studyPlanUrl,
         #[ORM\Column(name: 'curriculum_document_url', type: 'string')]
-        private readonly string $curriculumDocumentUrl,
+        private string $curriculumDocumentUrl,
         #[ORM\ManyToOne(targetEntity: Node::class, cascade: ['persist'])]
         #[ORM\JoinColumn(name: 'root_node_id', referencedColumnName: 'id')]
         private readonly Node\RootNode $rootNode
@@ -94,5 +94,16 @@ final class Curriculum
     public function getUri(): string
     {
         return $this->uri;
+    }
+
+    /**
+     * @param Curriculum $curriculum
+     * @return void
+     */
+    public function update(Curriculum $curriculum): void
+    {
+        $this->studyPlanUrl = $curriculum->studyPlanUrl;
+        $this->curriculumDocumentUrl = $curriculum->curriculumDocumentUrl;
+        $this->rootNode->update($curriculum->rootNode);
     }
 }

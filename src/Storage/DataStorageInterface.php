@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ITB\CmlifeClient\Storage;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ObjectRepository;
 use ITB\CmlifeClient\Model\Course;
 use ITB\CmlifeClient\Model\Person;
 use ITB\CmlifeClient\Model\Semester;
@@ -18,6 +17,11 @@ use ITB\CmlifeClient\Storage\Repository\StudyRepository;
 
 interface DataStorageInterface
 {
+    /**
+     * @return void
+     */
+    public function flush(): void;
+
     /**
      * @return CourseRepository
      */

@@ -7,6 +7,7 @@ namespace ITB\CmlifeClient\Storage;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\ORM\Tools\SchemaTool;
 use Exception;
@@ -82,6 +83,16 @@ final class DataStorage implements DataStorageInterface
     }
 
     /**
+     * @return void
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function flush(): void
+    {
+        $this->entityManager->flush();
+    }
+
+    /**
      * @return CourseRepository
      */
     public function getCourseRepository(): CourseRepository
@@ -138,7 +149,8 @@ final class DataStorage implements DataStorageInterface
     {
         $persistedCourse = $this->courseRepository->find($course->getId());
         if (null !== $persistedCourse) {
-            $this->entityManager->remove($persistedCourse);
+            $persistedCourse->update($course);
+            $course = $persistedCourse;
         }
 
         $this->entityManager->persist($course);
@@ -153,7 +165,8 @@ final class DataStorage implements DataStorageInterface
     {
         $persistedPerson = $this->personRepository->find($person->getUri());
         if (null !== $persistedPerson) {
-            $this->entityManager->remove($persistedPerson);
+            $persistedPerson->update($person);
+            $person = $persistedPerson;
         }
 
         $this->entityManager->persist($person);
@@ -168,7 +181,8 @@ final class DataStorage implements DataStorageInterface
     {
         $persistedSemester = $this->semesterRepository->find($semester->getId());
         if (null !== $persistedSemester) {
-            $this->entityManager->remove($persistedSemester);
+            $persistedSemester->update($semester);
+            $semester = $persistedSemester;
         }
 
         $this->entityManager->persist($semester);
@@ -183,7 +197,8 @@ final class DataStorage implements DataStorageInterface
     {
         $persistedStudy = $this->studyRepository->find($study->getId());
         if (null !== $persistedStudy) {
-            $this->entityManager->remove($study);
+            $persistedStudy->update($study);
+            $study = $persistedStudy;
         }
 
         $this->entityManager->persist($study);

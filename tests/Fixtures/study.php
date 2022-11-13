@@ -333,7 +333,90 @@ function getStudyData(): array
 /**
  * @return array<string, mixed>
  */
+function getRootNodeDataFromCurriculum(): array
+{
+    return getCurriculumData()['root'];
+}
+
+/**
+ * @return array<string, mixed>
+ */
+function getRootNodeUpdateDataWithIdenticalNodes(): array
+{
+    $data = getRootNodeDataFromCurriculum();
+    $data['nameDe'] = 'Geänderter Name 3';
+    $data['children'][0]['nameDe'] = 'Geänderter Name 1';
+    $data['children'][0]['children'][0]['nameDe'] = 'Geänderter Name 2';
+    $data['children'][0]['children'][0]['children'][0]['nameDe'] = 'Geänderter Name 3';
+
+    return $data;
+}
+
+/**
+ * @return array<string, mixed>
+ */
+function getRootNodeUpdateDataWithRemovedChildOnSecondLevel(): array
+{
+    $data = getRootNodeDataFromCurriculum();
+    $data['children'][0]['children'] = [];
+
+    return $data;
+}
+
+/**
+ * @return array<string, mixed>
+ */
+function getRootNodeUpdateDataWithAddedChildOnSecondLevel(): array
+{
+    $data = getRootNodeDataFromCurriculum();
+
+    include_once __DIR__ . '/node/link_node.php';
+    $data['children'][0]['children'][] = getLinkNodeData();
+
+    return $data;
+}
+
+/**
+ * @return array<string, mixed>
+ */
 function getCurriculumData(): array
 {
     return getStudyData()['curriculum'];
+}
+
+/**
+ * @return array<string, mixed>
+ */
+function getCurriculumDataWithWrongRootNodeType(): array
+{
+    $data = getStudyData()['curriculum'];
+    $data['root']['type'] = 'LINK';
+
+    return $data;
+}
+
+/**
+ * @return array<string, mixed>
+ */
+function getStudyUpdateData(): array
+{
+    $data = getStudyData();
+    $data['program']['subject']['nameDe'] = 'Angewandte finstere Chaoswissenschaft';
+    $data['program']['degreeGoal']['nameDe'] = 'Bachelor of Sinister Disaster';
+    $data['curriculum']['curriculumDocumentUrl'] = 'https://666.666.666.666';
+
+    return $data;
+}
+
+/**
+ * @return array<string, mixed>
+ */
+function getCurriculumUpdateData(): array
+{
+    $data = getCurriculumData();
+    $data['studyPlanUrl'] = 'https://666.666.666.666';
+    $data['curriculumDocumentUrl'] = 'https://777.777.777.777';
+    $data['root']['nameDe'] = '66.06.666';
+
+    return $data;
 }

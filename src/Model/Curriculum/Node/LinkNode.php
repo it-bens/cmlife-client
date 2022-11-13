@@ -45,4 +45,16 @@ final class LinkNode extends Node
     {
         return self::TYPE;
     }
+
+    /**
+     * @param NodeInterface $node
+     * @return void
+     */
+    public function update(NodeInterface $node): void
+    {
+        parent::update($node);
+        /** @var LinkNode $node */
+
+        $this->courseEquivalenceUri = $node->courseEquivalenceUri;
+    }
 }

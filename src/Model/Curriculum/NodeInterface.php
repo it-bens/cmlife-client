@@ -51,4 +51,10 @@ interface NodeInterface
      * @return string
      */
     public function getUri(): string;
+
+    /**
+     * @param NodeInterface $node
+     * @return void
+     */
+    public function update(NodeInterface $node): void;
 }

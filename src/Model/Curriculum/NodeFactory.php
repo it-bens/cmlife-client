@@ -6,11 +6,12 @@ namespace ITB\CmlifeClient\Model\Curriculum;
 
 use ITB\CmlifeClient\Model\Curriculum\Node\AssessmentNode;
 use ITB\CmlifeClient\Model\Curriculum\Node\LinkNode;
+use ITB\CmlifeClient\Model\Curriculum\Node\ModuleNode;
 use ITB\CmlifeClient\Model\Curriculum\Node\OfferNode;
 use ITB\CmlifeClient\Model\Curriculum\Node\PartNode;
 use ITB\CmlifeClient\Model\Curriculum\Node\RootNode;
 use ITB\CmlifeClient\Model\Curriculum\Node\RuleNode;
-use ITB\CmlifeClient\Model\Curriculum\Node\ModuleNode;
+use ITB\CmlifeClient\Model\Curriculum\NodeFactoryException\UnknownNodeTypException;
 
 final class NodeFactory
 {
@@ -37,8 +38,23 @@ final class NodeFactory
             $nodeData['children'] = [];
         }
 
-        $nodeClassName = self::NODE_TYPE_TO_CLASS_MAP[strtolower($nodeData['type'])];
+        $nodeClassName = self::getNodeClassForNodeType($nodeData['type']);
 
-        return $nodeClassName::create($nodeData, $parent);
+        return call_user_func([$nodeClassName, 'create'], $nodeData, $parent);
+    }
+
+    /**
+     * @param string $nodeType
+     * @return class-string<NodeInterface>
+     */
+    public static function getNodeClassForNodeType(string $nodeType): string
+    {
+        $nodeType = strtolower($nodeType);
+
+        if (!array_key_exists($nodeType, self::NODE_TYPE_TO_CLASS_MAP)) {
+            throw UnknownNodeTypException::create($nodeType, array_keys(self::NODE_TYPE_TO_CLASS_MAP));
+        }
+
+        return self::NODE_TYPE_TO_CLASS_MAP[$nodeType];
     }
 }
