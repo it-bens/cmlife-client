@@ -104,6 +104,20 @@ final class CourseTest extends TestCase
     /**
      * @return Generator
      */
+    public function provideForTestUpdate(): Generator
+    {
+        include_once __DIR__ . '/../Fixtures/current_semester.php';
+        $semester = Semester::create(getCurrentSemesterData());
+        include_once __DIR__ . '/../Fixtures/course.php';
+        $course = Course::create(getCourseData(), $semester);
+        $courseUpdate = Course::create(getCourseUpdateData(), $semester);
+
+        yield [$course, $courseUpdate];
+    }
+
+    /**
+     * @return Generator
+     */
     public function provideFotTestGetCode(): Generator
     {
         include_once __DIR__ . '/../Fixtures/current_semester.php';
@@ -210,5 +224,24 @@ final class CourseTest extends TestCase
     public function testGetUri(Course $course, string $expectedUri): void
     {
         $this->assertEquals($expectedUri, $course->getUri());
+    }
+
+    /**
+     * @dataProvider provideForTestUpdate
+     *
+     * @param Course $course
+     * @param Course $courseUpdate
+     * @return void
+     */
+    public function testUpdate(Course $course, Course $courseUpdate): void
+    {
+        $this->assertNotEquals($courseUpdate->getName(), $course->getName());
+        $this->assertNotEquals($courseUpdate->getCode(), $course->getCode());
+        $this->assertNotEquals($courseUpdate->getFrontendUrl(), $course->getFrontendUrl());
+
+        $course->update($courseUpdate);
+        $this->assertEquals($courseUpdate->getName(), $course->getName());
+        $this->assertEquals($courseUpdate->getCode(), $course->getCode());
+        $this->assertEquals($courseUpdate->getFrontendUrl(), $course->getFrontendUrl());
     }
 }

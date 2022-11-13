@@ -74,6 +74,18 @@ final class SemesterTest extends TestCase
     }
 
     /**
+     * @return Generator
+     */
+    public function provideForTestUpdate(): Generator
+    {
+        include_once __DIR__ . '/../Fixtures/current_semester.php';
+        $currentSemester = Semester::create(getCurrentSemesterData());
+        $currentSemesterUpdate = Semester::create(getCurrentSemesterUpdateData());
+
+        yield [$currentSemester, $currentSemesterUpdate];
+    }
+
+    /**
      * @dataProvider provideForTestCreateCurrentSemester
      *
      * @param array<string, mixed> $semesterData
@@ -132,5 +144,22 @@ final class SemesterTest extends TestCase
     public function testIsCurrent(Semester $semester, bool $expectedIsCurrent): void
     {
         $this->assertEquals($expectedIsCurrent, $semester->isCurrent());
+    }
+
+    /**
+     * @dataProvider provideForTestUpdate
+     *
+     * @param Semester $semester
+     * @param Semester $semesterUpdate
+     * @return void
+     */
+    public function testUpdate(Semester $semester, Semester $semesterUpdate): void
+    {
+        $this->assertNotEquals($semesterUpdate->getName(), $semester->getName());
+        $this->assertNotEquals($semesterUpdate->isCurrent(), $semester->isCurrent());
+
+        $semester->update($semesterUpdate);
+        $this->assertEquals($semesterUpdate->getName(), $semester->getName());
+        $this->assertEquals($semesterUpdate->isCurrent(), $semester->isCurrent());
     }
 }

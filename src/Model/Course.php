@@ -18,11 +18,11 @@ final class Course
         #[ORM\Column(name: 'equivalence_uri', type: 'string')]
         private readonly string $equivalenceUri,
         #[ORM\Column(name: 'name', type: 'string')]
-        private readonly string $name,
+        private string $name,
         #[ORM\Column(name: 'code', type: 'string')]
-        private readonly string $code,
+        private string $code,
         #[ORM\Column(name: 'frontend_url', type: 'string')]
-        private readonly string $frontendUrl,
+        private string $frontendUrl,
         #[ORM\ManyToOne(targetEntity: Semester::class)]
         #[ORM\JoinColumn(name: 'semester_id', referencedColumnName: 'id')]
         private readonly Semester $semester
@@ -102,5 +102,16 @@ final class Course
     public function getUri(): string
     {
         return $this->uri;
+    }
+
+    /**
+     * @param Course $course
+     * @return void
+     */
+    public function update(Course $course): void
+    {
+        $this->name = $course->name;
+        $this->code = $course->code;
+        $this->frontendUrl = $course->frontendUrl;
     }
 }

@@ -65,6 +65,18 @@ final class PersonTest extends TestCase
     }
 
     /**
+     * @return Generator
+     */
+    public function provideForTestUpdate(): Generator
+    {
+        include_once __DIR__ . '/../Fixtures/me.php';
+        $me = Person::create(getPersonMeData(), true);
+        $meUpdate = Person::create(getPersonMeData(), false);
+
+        yield [$me, $meUpdate];
+    }
+
+    /**
      * @dataProvider provideForTestCreatePerson
      *
      * @param array<string, mixed> $personData
@@ -112,5 +124,20 @@ final class PersonTest extends TestCase
     public function testGetUsername(Person $person, string $expectedUsername): void
     {
         $this->assertEquals($expectedUsername, $person->getUsername());
+    }
+
+    /**
+     * @dataProvider provideForTestUpdate
+     *
+     * @param Person $person
+     * @param Person $personUpdate
+     * @return void
+     */
+    public function testUpdate(Person $person, Person $personUpdate): void
+    {
+        $this->assertNotEquals($personUpdate->isMe(), $person->isMe());
+
+        $person->update($personUpdate);
+        $this->assertEquals($personUpdate->isMe(), $person->isMe());
     }
 }

@@ -34,6 +34,14 @@ final class PersonRepository
     }
 
     /**
+     * @return Person[]
+     */
+    public function findAll(): array
+    {
+        return $this->entityRepository->findAll();
+    }
+
+    /**
      * @return Person
      * @throws StorageException
      */

@@ -23,3 +23,15 @@ function getCurrentSemesterData(): array
         'uri' => '//ubt@cmco/api/semesters/243',
     ];
 }
+
+/**
+ * @return array<string, mixed>
+ */
+function getCurrentSemesterUpdateData(): array
+{
+    $data = getCurrentSemesterData();
+    $data['name'] = 'Wintersemester 2022/23 (aktualisiert)';
+    $data['current'] = false;
+
+    return $data;
+}

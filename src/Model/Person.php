@@ -21,7 +21,7 @@ final class Person
         #[ORM\Column(name: 'username', type: 'string')]
         private readonly string $username,
         #[ORM\Column(name: 'is_me', type: 'boolean')]
-        private readonly bool $isMe
+        private bool $isMe
     ) {
     }
 
@@ -60,5 +60,14 @@ final class Person
     public function isMe(): bool
     {
         return $this->isMe;
+    }
+
+    /**
+     * @param Person $person
+     * @return void
+     */
+    public function update(Person $person): void
+    {
+        $this->isMe = $person->isMe;
     }
 }

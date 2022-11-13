@@ -7,7 +7,6 @@ namespace ITB\CmlifeClient\Storage\Repository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Exception;
-use ITB\CmlifeClient\Exception\StorageException;
 use ITB\CmlifeClient\Model\Curriculum\Node;
 use ITB\CmlifeClient\Model\Curriculum\NodeInterface;
 use ITB\CmlifeClient\Model\Study;

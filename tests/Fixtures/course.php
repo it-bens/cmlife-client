@@ -68,3 +68,16 @@ function getCourseData(): array
         'uri' => '//ubt@cmco/api/courses/308609',
     ];
 }
+
+/**
+ * @return array<string, mixed>
+ */
+function getCourseUpdateData(): array
+{
+    $data = getCourseData();
+    $data['nameDe'] = 'Vergangene Themen der Umweltgeochemie';
+    $data['code'] = '1337';
+    $data['frontendUrl'] = 'https://666.666.666.666';
+
+    return $data;
+}

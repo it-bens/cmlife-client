@@ -23,9 +23,9 @@ final class Study
         #[ORM\Column(name: 'uri', type: 'string')]
         private readonly string $uri,
         #[ORM\Column(name: 'program_subject', type: 'string')]
-        private readonly string $programSubject,
+        private string $programSubject,
         #[ORM\Column(name: 'program_degree', type: 'string')]
-        private readonly string $programDegree,
+        private string $programDegree,
         #[ORM\OneToOne(targetEntity: Curriculum::class, cascade: ['all'], orphanRemoval: true)]
         #[ORM\JoinColumn(name: 'curriculum_id', referencedColumnName: 'id')]
         private readonly Curriculum $curriculum
@@ -86,5 +86,16 @@ final class Study
     public function getUri(): string
     {
         return $this->uri;
+    }
+
+    /**
+     * @param Study $study
+     * @return void
+     */
+    public function update(Study $study): void
+    {
+        $this->programSubject = $study->programSubject;
+        $this->programDegree = $study->programDegree;
+        $this->curriculum->update($study->curriculum);
     }
 }

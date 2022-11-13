@@ -22,9 +22,9 @@ final class Semester
         #[ORM\Column(name: 'uri', type: 'string')]
         private readonly string $uri,
         #[ORM\Column(name: 'name', type: 'string')]
-        private readonly string $name,
+        private string $name,
         #[ORM\Column(name: 'is_current', type: 'boolean')]
-        private readonly bool $isCurrent
+        private bool $isCurrent
     ) {
     }
 
@@ -72,5 +72,15 @@ final class Semester
     public function isCurrent(): bool
     {
         return $this->isCurrent;
+    }
+
+    /**
+     * @param Semester $semester
+     * @return void
+     */
+    public function update(Semester $semester): void
+    {
+        $this->name = $semester->name;
+        $this->isCurrent = $semester->isCurrent;
     }
 }
