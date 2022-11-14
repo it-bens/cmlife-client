@@ -15,6 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 final class CmlifeClientWithoutInitializationTest extends TestCase
 {
+    use CreateCmlifeClientTrait;
+
     private static CmlifeClient $cmlifeClient;
 
     /**
@@ -24,7 +26,7 @@ final class CmlifeClientWithoutInitializationTest extends TestCase
      */
     public static function setUpBeforeClass(): void
     {
-        $cmlifeClient = CmlifeClient::createWithUsernameAndPasswordAuthentication(
+        $cmlifeClient = self::createCmlifeClientWithUsernameAndPasswordAuthentication(
             [
                 UsernamePasswordAuthenticator::CREDENTIAL_NAME_USERNAME => $_ENV['CMLIFE_USERNAME'],
                 UsernamePasswordAuthenticator::CREDENTIAL_NAME_PASSWORD => $_ENV['CMLIFE_PASSWORD']

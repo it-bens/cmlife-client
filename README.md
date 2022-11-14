@@ -31,24 +31,10 @@ As an alternative a `CookieValueAuthenticator` is provided by this package. It r
 
 ### Client creation
 
-The client can be created via constructor or to keep thing simple, by its own factory method. In case the constructor is used a `DataClientInterface` and a `DataStorageInterface` implementation has to be provided.
+The client requires implementations of the `DataClientInterface` and the `DataStorageInterface`.
 ```php
 # via constructor
 $cmlifeClient = new \ITB\CmlifeClient\CmlifeClient($someDataClient, $someDataStorage);
-```
-
-The `createWithUsernameAndPasswordAuthentication` method requires username and password to create the `Authenticator` and use its authentication. The data client is created with the default Symfony `HttpClient`. The data storage is created with an in-memory sqlite database.
-
-```php
-# via static factory method
-$cmlifeClient = \ITB\CmlifeClient\CmlifeClient::createWithUsernameAndPasswordAuthentication(['username' => $username, 'password' => $password]);
-```
-
-As mentioned, the `CookieValueAuthenticator` can be used as well.
-
-```php
-# via static factory method
-$cmlifeClient = \ITB\CmlifeClient\CmlifeClient::createWithCookieValuesAuthentication(['sessionId' => $sessionId, 'xsrfToken' => $xsrfToken]);
 ```
 
 After creation, no other method than `fetchDataFromCmlife` can be used. Only after that method was executed, the data from cmlife can be used.
