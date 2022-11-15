@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ITB\CmlifeClient\Tests;
 
+use Doctrine\ORM\Exception\ORMException;
 use Generator;
 use ITB\CmlifeClient\Authentication\UsernamePasswordAuthenticator;
 use ITB\CmlifeClient\CmlifeClient;
@@ -15,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 
 final class CmlifeClientWithoutInitializationTest extends TestCase
 {
+    use CreateDoctrineDataStorageTrait;
     use CreateCmlifeClientTrait;
 
     private static CmlifeClient $cmlifeClient;
@@ -22,15 +24,18 @@ final class CmlifeClientWithoutInitializationTest extends TestCase
     /**
      * @return void
      * @throws AuthenticationException
-     * @throws StorageException
+     * @throws ORMException
      */
     public static function setUpBeforeClass(): void
     {
+        $dataStorage = self::createDoctrineDataStorage();
         $cmlifeClient = self::createCmlifeClientWithUsernameAndPasswordAuthentication(
             [
                 UsernamePasswordAuthenticator::CREDENTIAL_NAME_USERNAME => $_ENV['CMLIFE_USERNAME'],
                 UsernamePasswordAuthenticator::CREDENTIAL_NAME_PASSWORD => $_ENV['CMLIFE_PASSWORD']
-            ]
+            ],
+            $dataStorage,
+            $dataStorage
         );
 
         self::$cmlifeClient = $cmlifeClient;

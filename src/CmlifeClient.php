@@ -22,7 +22,8 @@ use ITB\CmlifeClient\Model\Curriculum\Node;
 use ITB\CmlifeClient\Model\Person;
 use ITB\CmlifeClient\Model\Semester;
 use ITB\CmlifeClient\Model\Study;
-use ITB\CmlifeClient\Storage\DataStorageInterface;
+use ITB\CmlifeClient\Storage\DataManagerInterface;
+use ITB\CmlifeClient\Storage\DataRepositoryInterface;
 use JsonException;
 
 final class CmlifeClient implements CmlifeClientInterface
@@ -48,10 +49,14 @@ final class CmlifeClient implements CmlifeClientInterface
 
     /**
      * @param DataClientInterface $dataClient
-     * @param DataStorageInterface $dataStorage
+     * @param DataManagerInterface $dataManager
+     * @param DataRepositoryInterface $dataRepository
      */
-    public function __construct(private readonly DataClientInterface $dataClient, private readonly DataStorageInterface $dataStorage)
-    {
+    public function __construct(
+        private readonly DataClientInterface $dataClient,
+        private readonly DataManagerInterface $dataManager,
+        private readonly DataRepositoryInterface $dataRepository
+    ) {
     }
 
     /**
@@ -88,19 +93,19 @@ final class CmlifeClient implements CmlifeClientInterface
         $previousSemesterPromise->wait(false);
         $nextSemesterPromise->wait(false);
         $currentPersonPromise->wait(false);
-        $this->dataStorage->getEntityManager()->flush();
+        $this->dataManager->flush();
 
         $coursePromises = [];
-        foreach ($this->dataStorage->getSemesterRepository()->findAll() as $semester) {
+        foreach ($this->dataRepository->findAllSemesters() as $semester) {
             $coursePromises = array_merge($coursePromises, $this->fetchCourses($semester));
         }
         Utils::all($coursePromises)->wait();
-        $this->dataStorage->getEntityManager()->flush();
+        $this->dataManager->flush();
 
-        $me = $this->dataStorage->getPersonRepository()->findMe();
+        $me = $this->dataRepository->findMe();
         $studiesPromises = $this->fetchMyStudies($me);
         Utils::all($studiesPromises)->wait();
-        $this->dataStorage->getEntityManager()->flush();
+        $this->dataManager->flush();
 
         $this->dataFetched = true;
     }
@@ -114,21 +119,24 @@ final class CmlifeClient implements CmlifeClientInterface
             throw CmlifeDataNotFetchedException::create();
         }
 
-        return $this->dataStorage->getCourseRepository()->findBySemester($semester);
+        return $this->dataRepository->findCoursesBySemester($semester);
     }
 
     /**
      * @param Study $study
      * @param Semester $semester
      * @return Course[]
-     * @throws StorageException
      */
     public function getCoursesForStudyAndSemester(Study $study, Semester $semester): array
     {
-        /** @var Node\LinkNode[] $nodes */
-        $nodes = $this->dataStorage->getNodeRepository()->findByTypeAndStudy(Node\LinkNode::TYPE, $study);
+        if (false === $this->dataFetched) {
+            throw CmlifeDataNotFetchedException::create();
+        }
 
-        return $this->dataStorage->getCourseRepository()->findByLinkNodesAndSemester($nodes, $semester);
+        /** @var Node\LinkNode[] $nodes */
+        $nodes = $this->dataRepository->findNodesByTypeAndStudy(Node\LinkNode::TYPE, $study);
+
+        return $this->dataRepository->findCoursesByLinkNodesAndSemester($nodes, $semester);
     }
 
     /**
@@ -141,7 +149,7 @@ final class CmlifeClient implements CmlifeClientInterface
             throw CmlifeDataNotFetchedException::create();
         }
 
-        return $this->dataStorage->getPersonRepository()->findMe();
+        return $this->dataRepository->findMe();
     }
 
     /**
@@ -154,7 +162,7 @@ final class CmlifeClient implements CmlifeClientInterface
             throw CmlifeDataNotFetchedException::create();
         }
 
-        return $this->dataStorage->getSemesterRepository()->findCurrent();
+        return $this->dataRepository->findCurrentSemester();
     }
 
     /**
@@ -166,7 +174,7 @@ final class CmlifeClient implements CmlifeClientInterface
             throw CmlifeDataNotFetchedException::create();
         }
 
-        return $this->dataStorage->getStudyRepository()->findAll();
+        return $this->dataRepository->findAllStudies();
     }
 
     /**
@@ -207,7 +215,7 @@ final class CmlifeClient implements CmlifeClientInterface
             }
             foreach ($pagedCoursesData['content'] as $courseData) {
                 $course = Course::create($courseData, $semester);
-                $this->dataStorage->persistCourse($course);
+                $this->dataManager->persistCourse($course);
             }
         };
 
@@ -231,7 +239,7 @@ final class CmlifeClient implements CmlifeClientInterface
             }
 
             $person = Person::create($personData, true);
-            $this->dataStorage->persistPerson($person);
+            $this->dataManager->persistPerson($person);
         };
 
         return $this->dataClient->fetchDataAsync(
@@ -273,7 +281,7 @@ final class CmlifeClient implements CmlifeClientInterface
             }
 
             $study = Study::create($studyData);
-            $this->dataStorage->persistStudy($study);
+            $this->dataManager->persistStudy($study);
         };
 
         return $this->dataClient->fetchAllDataAsync($requestDatasets, $onFailureCallback, $onSuccessCallback);
@@ -297,7 +305,7 @@ final class CmlifeClient implements CmlifeClientInterface
             }
 
             $semester = Semester::create($semesterData);
-            $this->dataStorage->persistSemester($semester);
+            $this->dataManager->persistSemester($semester);
         };
 
         return $this->dataClient->fetchDataAsync(
