@@ -4,7 +4,7 @@
 [![PHPUnit](https://github.com/it-bens/cmlife-client/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/it-bens/cmlife-client/actions/workflows/phpunit.yml)
 [![Test Coverage](https://codecov.io/gh/it-bens/cmlife-client/branch/master/graph/badge.svg?token=66IPB6T9WQ)](https://codecov.io/gh/it-bens/cmlife-client)
 [![PHPUnit](https://github.com/it-bens/cmlife-client/actions/workflows/static-analysis.yml/badge.svg?branch=master)](https://github.com/it-bens/cmlife-client/actions/workflows/static-analysis.yml)
-[![Type coverage](https://shepherd.dev/github/{username}/{repo}/coverage.svg)]
+[![Type coverage](https://shepherd.dev/github/it-bens/cmlife-client/coverage.svg)](https://shepherd.dev/github/it-bens/cmlife-client)
 
 ## What is this about?
 
