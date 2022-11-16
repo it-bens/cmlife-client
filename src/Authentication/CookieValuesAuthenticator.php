@@ -41,7 +41,7 @@ final class CookieValuesAuthenticator extends BaseAuthenticator
      */
     public function authenticate(array $credentials, bool $forceAuthenticationRenewal = false): void
     {
-        $credentials = array_filter($credentials, static function($key, $value): bool{
+        $credentials = array_filter($credentials, static function ($key, $value): bool {
             return is_string($key) && is_string($value);
         }, ARRAY_FILTER_USE_BOTH);
         /** @var array<string, string> $credentials */

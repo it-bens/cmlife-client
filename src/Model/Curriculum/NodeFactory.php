@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ITB\CmlifeClient\Model\Curriculum;
 
 use ITB\CmlifeClient\Model\Curriculum\Node\AssessmentNode;
+use ITB\CmlifeClient\Model\Curriculum\Node\FocusNode;
 use ITB\CmlifeClient\Model\Curriculum\Node\LinkNode;
 use ITB\CmlifeClient\Model\Curriculum\Node\ModuleNode;
 use ITB\CmlifeClient\Model\Curriculum\Node\OfferNode;
@@ -23,7 +24,8 @@ final class NodeFactory
         OfferNode::TYPE => OfferNode::class,
         PartNode::TYPE => PartNode::class,
         RootNode::TYPE => RootNode::class,
-        RuleNode::TYPE => RuleNode::class
+        RuleNode::TYPE => RuleNode::class,
+        FocusNode::TYPE => FocusNode::class
     ];
 
     /**
