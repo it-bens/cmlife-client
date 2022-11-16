@@ -41,6 +41,11 @@ final class CookieValuesAuthenticator extends BaseAuthenticator
      */
     public function authenticate(array $credentials, bool $forceAuthenticationRenewal = false): void
     {
+        $credentials = array_filter($credentials, static function($key, $value): bool{
+            return is_string($key) && is_string($value);
+        }, ARRAY_FILTER_USE_BOTH);
+        /** @var array<string, string> $credentials */
+
         $sessionId = $this->extractSessionIdFromCredentials($credentials);
         $xsrfToken = $this->extractXsrfTokenFromCredentials($credentials);
 
@@ -77,7 +82,7 @@ final class CookieValuesAuthenticator extends BaseAuthenticator
     }
 
     /**
-     * @param array<string, mixed> $credentials
+     * @param array<string, string> $credentials
      * @return string
      */
     private function extractSessionIdFromCredentials(array $credentials): string
@@ -90,7 +95,7 @@ final class CookieValuesAuthenticator extends BaseAuthenticator
     }
 
     /**
-     * @param array<string, mixed> $credentials
+     * @param array<string, string> $credentials
      * @return string
      */
     private function extractXsrfTokenFromCredentials(array $credentials): string

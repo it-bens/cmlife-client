@@ -145,14 +145,14 @@ abstract class Node implements NodeInterface
             throw InvalidNodeTypeOnUpdateException::create(get_debug_type($node), static::class);
         }
 
-        $this->name = $node->name;
+        $this->name = $node->getName();
 
         $persistedChildNodes = [];
         foreach ($this->children as $persistedChildNode) {
             $persistedChildNodes[$persistedChildNode->getId()] = $persistedChildNode;
         }
 
-        foreach ($node->children as $childNode) {
+        foreach ($node->getChildren() as $childNode) {
             if (!array_key_exists($childNode->getId(), $persistedChildNodes)) {
                 $this->children->add($childNode);
                 continue;
