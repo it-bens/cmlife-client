@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="4.30.0@d0bc6e25d89f649e4f36a534f330f8bb4643dd69">
+  <file src="src/CmlifeClient.php">
+    <MixedArgument occurrences="5">
+      <code>$courseData</code>
+      <code>$personData</code>
+      <code>$semesterData</code>
+      <code>$studyData</code>
+      <code>$totalCourses / self::COURSE_ENDPOINT_LIMIT</code>
+    </MixedArgument>
+    <MixedArrayAccess occurrences="3">
+      <code>$pagedCoursesData['content']</code>
+      <code>$studyData['id']</code>
+      <code>json_decode($totalCoursesContent, true, flags: JSON_THROW_ON_ERROR)['totalElements']</code>
+    </MixedArrayAccess>
+    <MixedAssignment occurrences="9">
+      <code>$courseData</code>
+      <code>$myStudiesData</code>
+      <code>$pagedCoursesData</code>
+      <code>$personData</code>
+      <code>$semesterData</code>
+      <code>$studyData</code>
+      <code>$studyData</code>
+      <code>$studyId</code>
+      <code>$totalCourses</code>
+    </MixedAssignment>
+    <MixedOperand occurrences="2">
+      <code>$studyId</code>
+      <code>$totalCourses</code>
+    </MixedOperand>
+  </file>
+  <file src="src/Model/Course.php">
+    <MixedArgument occurrences="6">
+      <code>$code</code>
+      <code>$equivalenceUri</code>
+      <code>$frontendUrl</code>
+      <code>$id</code>
+      <code>$name</code>
+      <code>$uri</code>
+    </MixedArgument>
+    <MixedAssignment occurrences="6">
+      <code>$code</code>
+      <code>$equivalenceUri</code>
+      <code>$frontendUrl</code>
+      <code>$id</code>
+      <code>$name</code>
+      <code>$uri</code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Model/Curriculum.php">
+    <MixedArgument occurrences="5">
+      <code>$curriculumData['root']</code>
+      <code>$curriculumDocumentUrl</code>
+      <code>$id</code>
+      <code>$studyPlanUrl</code>
+      <code>$uri</code>
+    </MixedArgument>
+    <MixedAssignment occurrences="4">
+      <code>$curriculumDocumentUrl</code>
+      <code>$id</code>
+      <code>$studyPlanUrl</code>
+      <code>$uri</code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Model/Curriculum/Node.php">
+    <MixedArgument occurrences="6">
+      <code>$childNodeData</code>
+      <code>$id</code>
+      <code>$name</code>
+      <code>$nodeData['type']</code>
+      <code>$nodeData['type']</code>
+      <code>$uri</code>
+    </MixedArgument>
+    <MixedAssignment occurrences="4">
+      <code>$childNodeData</code>
+      <code>$id</code>
+      <code>$name</code>
+      <code>$uri</code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Model/Curriculum/Node/LinkNode.php">
+    <MixedAssignment occurrences="1">
+      <code>$node-&gt;courseEquivalenceUri</code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Model/Curriculum/NodeFactory.php">
+    <MixedArgument occurrences="1">
+      <code>$nodeData['type']</code>
+    </MixedArgument>
+    <MixedInferredReturnType occurrences="1">
+      <code>NodeInterface</code>
+    </MixedInferredReturnType>
+    <MixedReturnStatement occurrences="1">
+      <code>call_user_func([$nodeClassName, 'create'], $nodeData, $parent)</code>
+    </MixedReturnStatement>
+  </file>
+  <file src="src/Model/Person.php">
+    <MixedArgument occurrences="2">
+      <code>$uri</code>
+      <code>$username</code>
+    </MixedArgument>
+    <MixedAssignment occurrences="2">
+      <code>$uri</code>
+      <code>$username</code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Model/Semester.php">
+    <MixedArgument occurrences="4">
+      <code>$id</code>
+      <code>$isCurrent</code>
+      <code>$name</code>
+      <code>$uri</code>
+    </MixedArgument>
+    <MixedAssignment occurrences="4">
+      <code>$id</code>
+      <code>$isCurrent</code>
+      <code>$name</code>
+      <code>$uri</code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Model/Study.php">
+    <MixedArgument occurrences="5">
+      <code>$id</code>
+      <code>$programDegree</code>
+      <code>$programSubject</code>
+      <code>$studyData['curriculum']</code>
+      <code>$uri</code>
+    </MixedArgument>
+    <MixedArrayAccess occurrences="2">
+      <code>$studyData['program']['degreeGoal']</code>
+      <code>$studyData['program']['subject']</code>
+    </MixedArrayAccess>
+    <MixedAssignment occurrences="4">
+      <code>$id</code>
+      <code>$programDegree</code>
+      <code>$programSubject</code>
+      <code>$uri</code>
+    </MixedAssignment>
+  </file>
+  <file src="src/Storage/DoctrineDataStorage.php">
+    <MixedArgument occurrences="1">
+      <code>$nodes</code>
+    </MixedArgument>
+    <MixedAssignment occurrences="1">
+      <code>$nodes</code>
+    </MixedAssignment>
+    <MixedInferredReturnType occurrences="1">
+      <code>Course[]</code>
+    </MixedInferredReturnType>
+    <MixedReturnStatement occurrences="1">
+      <code>$query-&gt;getResult()</code>
+    </MixedReturnStatement>
+    <MixedReturnTypeCoercion occurrences="2">
+      <code>NodeInterface[]</code>
+    </MixedReturnTypeCoercion>
+  </file>
+</files>
