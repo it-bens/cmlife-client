@@ -1,0 +1,114 @@
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+    tags:
+      - "**"
+
+name: "PHPStan & Psalm"
+
+jobs:
+  code-check-phpstan:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04]
+        php-version: [8.1]
+        experimental: [false]
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@5c3ccc22eb2c950a0fa5bc7c47190d8e3f7e681a
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: ctype, dom, json, libxml, mbstring, pdo_sqlite, simplexml, tokenizer, xml, xmlwriter
+          coverage: none
+          tools: composer
+
+      - name: "Get composer Cache directory"
+        id: composer-cache
+        run: |
+          echo "composer_cache_output_dir=dir::$(composer config cache-files-dir)" >> $GITHUB_ENV
+      #          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: "Cache composer dependencies"
+        uses: actions/cache@9a6a4f6079716b44e70b2e883cfdd6fb7d6ff5d9
+        with:
+          path: ${{ env.composer_cache_output_dir }}
+          key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('composer.*') }}
+          restore-keys: |
+            composer-${{ runner.os }}-${{ matrix.php-version }}-
+            composer-${{ runner.os }}-
+            composer-
+
+      - name: "Install composer dependencies"
+        uses: php-actions/composer@58260d1d3c7c1576becac3ac182175adf510e953
+        with:
+          php_version: ${{ matrix.php-version }}
+          dev: yes
+          args: --no-interaction --no-progress --optimize-autoloader
+
+      - name: "Run tests"
+        uses: php-actions/phpstan@9a3628e7fe886e0a95d0d0a966ecaddee9ecd93a
+        with:
+          php_version: ${{ matrix.php-version }}
+          php_extensions: ctype dom json libxml mbstring pdo simplexml tokenizer xml xmlwriter
+          configuration: phpstan.neon
+          memory_limit: 512M
+
+  code-check-psalm:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-20.04 ]
+        php-version: [ 8.1 ]
+        experimental: [ false ]
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@5c3ccc22eb2c950a0fa5bc7c47190d8e3f7e681a
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: ctype, dom, json, libxml, mbstring, pdo_sqlite, simplexml, tokenizer, xml, xmlwriter
+          coverage: none
+          tools: composer
+
+      - name: "Get composer Cache directory"
+        id: composer-cache
+        run: |
+          echo "composer_cache_output_dir=dir::$(composer config cache-files-dir)" >> $GITHUB_ENV
+      #          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: "Cache composer dependencies"
+        uses: actions/cache@9a6a4f6079716b44e70b2e883cfdd6fb7d6ff5d9
+        with:
+          path: ${{ env.composer_cache_output_dir }}
+          key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('composer.*') }}
+          restore-keys: |
+            composer-${{ runner.os }}-${{ matrix.php-version }}-
+            composer-${{ runner.os }}-
+            composer-
+
+      - name: "Install composer dependencies"
+        uses: php-actions/composer@58260d1d3c7c1576becac3ac182175adf510e953
+        with:
+          php_version: ${{ matrix.php-version }}
+          dev: yes
+          args: --no-interaction --no-progress --optimize-autoloader
+
+      - name: "Run a static analysis with vimeo/psalm"
+        run: |
+          vendor/bin/psalm --config=psalm.xml --output-format=github --show-info=false --stats --threads=$(nproc) --shepherd
