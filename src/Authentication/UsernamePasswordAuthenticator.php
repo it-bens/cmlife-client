@@ -50,6 +50,11 @@ final class UsernamePasswordAuthenticator extends BaseAuthenticator
      */
     public function authenticate(array $credentials, bool $forceAuthenticationRenewal = false): void
     {
+        $credentials = array_filter($credentials, static function($key, $value): bool{
+            return is_string($key) && is_string($value);
+        }, ARRAY_FILTER_USE_BOTH);
+        /** @var array<string, string> $credentials */
+
         $username = $this->extractUsernameFromCredentials($credentials);
         $password = $this->extractPasswordFromCredentials($credentials);
 
@@ -74,7 +79,7 @@ final class UsernamePasswordAuthenticator extends BaseAuthenticator
     }
 
     /**
-     * @param array<string, mixed> $credentials
+     * @param array<string, string> $credentials
      * @return string
      */
     private function extractPasswordFromCredentials(array $credentials): string
@@ -101,7 +106,7 @@ final class UsernamePasswordAuthenticator extends BaseAuthenticator
     }
 
     /**
-     * @param array<string, mixed> $credentials
+     * @param array<string, string> $credentials
      * @return string
      */
     private function extractUsernameFromCredentials(array $credentials): string

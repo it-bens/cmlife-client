@@ -34,8 +34,11 @@ style-check:
 style-fix:
 	docker-compose run --rm -T --volume /etc/passwd:/etc/passwd:ro --user $(.USER_ID) app vendor/bin/phpcbf --standard=PSR1,PSR12 --exclude=Generic.Files.LineLength $(folders)
 
-code-check:
+code-check-phpstan:
 	docker-compose run --rm -T --volume /etc/passwd:/etc/passwd:ro --user $(.USER_ID) -e "PHPSTAN_PRO_WEB_PORT=11111" -p "11111:11111" app vendor/bin/phpstan analyse -c phpstan.neon --pro
+
+code-check-psalm:
+	docker-compose run --rm -T app vendor/bin/psalm --config=psalm.xml
 
 phpunit-tests:
 	docker-compose run --rm -T --volume /etc/passwd:/etc/passwd:ro --user $(.USER_ID) app vendor/bin/phpunit -c phpunit.xml.dist
