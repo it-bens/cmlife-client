@@ -22,10 +22,10 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@5c3ccc22eb2c950a0fa5bc7c47190d8e3f7e681a
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4
+        uses: shivammathur/setup-php@cf36231a82a1ed07abe22c0bbdf5c637fa9d1648
         with:
           php-version: ${{ matrix.php-version }}
           extensions: ctype, dom, json, libxml, mbstring, pdo_sqlite, simplexml, tokenizer, xml, xmlwriter
@@ -39,7 +39,7 @@ jobs:
       #          echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: "Cache composer dependencies"
-        uses: actions/cache@9a6a4f6079716b44e70b2e883cfdd6fb7d6ff5d9
+        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a
         with:
           path: ${{ env.composer_cache_output_dir }}
           key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('composer.*') }}
@@ -49,14 +49,14 @@ jobs:
             composer-
 
       - name: "Install composer dependencies"
-        uses: php-actions/composer@58260d1d3c7c1576becac3ac182175adf510e953
+        uses: php-actions/composer@9908de9a0eb7bc64f3870f46ae6cc6cc619219d8
         with:
           php_version: ${{ matrix.php-version }}
           dev: yes
           args: --no-interaction --no-progress --optimize-autoloader
 
       - name: "Run tests"
-        uses: php-actions/phpstan@9a3628e7fe886e0a95d0d0a966ecaddee9ecd93a
+        uses: php-actions/phpstan@77ac183d8aa0a44d6859d128868f69ce68859697
         with:
           php_version: ${{ matrix.php-version }}
           php_extensions: ctype dom json libxml mbstring pdo simplexml tokenizer xml xmlwriter
@@ -76,10 +76,10 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@5c3ccc22eb2c950a0fa5bc7c47190d8e3f7e681a
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4
+        uses: shivammathur/setup-php@cf36231a82a1ed07abe22c0bbdf5c637fa9d1648
         with:
           php-version: ${{ matrix.php-version }}
           extensions: ctype, dom, json, libxml, mbstring, pdo_sqlite, simplexml, tokenizer, xml, xmlwriter
@@ -93,7 +93,7 @@ jobs:
       #          echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: "Cache composer dependencies"
-        uses: actions/cache@9a6a4f6079716b44e70b2e883cfdd6fb7d6ff5d9
+        uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a
         with:
           path: ${{ env.composer_cache_output_dir }}
           key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('composer.*') }}
@@ -103,7 +103,7 @@ jobs:
             composer-
 
       - name: "Install composer dependencies"
-        uses: php-actions/composer@58260d1d3c7c1576becac3ac182175adf510e953
+        uses: php-actions/composer@9908de9a0eb7bc64f3870f46ae6cc6cc619219d8
         with:
           php_version: ${{ matrix.php-version }}
           dev: yes
