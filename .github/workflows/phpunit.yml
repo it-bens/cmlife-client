@@ -23,10 +23,10 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@5c3ccc22eb2c950a0fa5bc7c47190d8e3f7e681a
+        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4
+        uses: shivammathur/setup-php@690cb7c9d81dbfe51eba732cfca0a00ca42db777
         with:
           php-version: ${{ matrix.php-version }}
           extensions: ctype, dom, json, libxml, mbstring, pdo_sqlite, simplexml, tokenizer, xml, xmlwriter
@@ -34,7 +34,7 @@ jobs:
           tools: composer
 
       - name: Specify symfony version
-        uses: jacobtomlinson/gha-find-replace@657b0d1fe020da9943d1702b576f5d37d43b9c03
+        uses: jacobtomlinson/gha-find-replace@b19bfcb2a015af55fd6e160d1d1987e887f8c163
         with:
           include: "composer.json"
           find: "^5.4|^6.0"
@@ -48,7 +48,7 @@ jobs:
       #          echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: "Cache composer dependencies"
-        uses: actions/cache@9a6a4f6079716b44e70b2e883cfdd6fb7d6ff5d9
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
         with:
           path: ${{ env.composer_cache_output_dir }}
           key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ matrix.symfony-version }}-${{ hashFiles('composer.*') }}
@@ -59,14 +59,14 @@ jobs:
             composer-
 
       - name: "Install composer dependencies"
-        uses: php-actions/composer@58260d1d3c7c1576becac3ac182175adf510e953
+        uses: php-actions/composer@38e159b1d594d722354e03beaa39e1beca3dc419
         with:
           php_version: ${{ matrix.php-version }}
           dev: yes
           args: --no-interaction --no-progress --optimize-autoloader
 
       - name: "Run tests"
-        uses: php-actions/phpunit@aed47a6852905dbd05b7c1a47c526b38fcc4bc17
+        uses: php-actions/phpunit@178d7fe2f639d9505ef214ab5d47233353a07f08
         env:
           CMLIFE_USERNAME: ${{ secrets.CMLIFE_USERNAME }}
           CMLIFE_PASSWORD: ${{ secrets.CMLIFE_PASSWORD }}
@@ -90,10 +90,10 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@5c3ccc22eb2c950a0fa5bc7c47190d8e3f7e681a
+        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@1a18b2267f80291a81ca1d33e7c851fe09e7dfc4
+        uses: shivammathur/setup-php@690cb7c9d81dbfe51eba732cfca0a00ca42db777
         with:
           php-version: ${{ matrix.php-version }}
           extensions: ctype, dom, json, libxml, mbstring, pdo, simplexml, tokenizer, xdebug, xml, xmlwriter
@@ -107,7 +107,7 @@ jobs:
 #          echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: "Cache composer dependencies"
-        uses: actions/cache@9a6a4f6079716b44e70b2e883cfdd6fb7d6ff5d9
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7
         with:
           path: ${{ env.composer_cache_output_dir }}
           key: composer-${{ runner.os }}-${{ matrix.php-version }}-${{ hashFiles('composer.*') }}
@@ -117,14 +117,14 @@ jobs:
             composer-
 
       - name: "Install composer dependencies"
-        uses: php-actions/composer@58260d1d3c7c1576becac3ac182175adf510e953
+        uses: php-actions/composer@38e159b1d594d722354e03beaa39e1beca3dc419
         with:
           php_version: ${{ matrix.php-version }}
           dev: yes
           args: --no-interaction --no-progress --optimize-autoloader
 
       - name: "Run tests"
-        uses: php-actions/phpunit@aed47a6852905dbd05b7c1a47c526b38fcc4bc17
+        uses: php-actions/phpunit@178d7fe2f639d9505ef214ab5d47233353a07f08
         env:
           CMLIFE_USERNAME: ${{ secrets.CMLIFE_USERNAME }}
           CMLIFE_PASSWORD: ${{ secrets.CMLIFE_PASSWORD }}
@@ -137,7 +137,7 @@ jobs:
           configuration: .github/workflows/phpunit.xml.dist
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@e0fbd592d323cb2991fb586fdd260734fcb41fcb
+        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: coverage.xml
